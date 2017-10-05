@@ -1,0 +1,61 @@
+- name: "install packages"
+  pacman:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - wpa_supplicant
+    - iw
+    - dialog
+    - syslinux
+
+- name: "set hostname"
+  copy:
+    content: "nitzsch.local\n"
+    dest: /etc/hostname
+
+# does not work on arch
+#- name: "set timezone"
+#  timezone:
+#    name: "{{ timezone }}"
+
+- name: "set timezone"
+  file:
+    src: /usr/share/zoneinfo/Europe/Zurich
+    dest: /etc/localtime
+    state: link
+
+- name: "configure keymap"
+  copy:
+    dest: /etc/vconsole.conf
+    content: "KEYMAP=de_CH-latin1\n"
+
+- name: "enable locale"
+  locale_gen:
+    name: de_CH.UTF-8
+    state: present
+
+- name: "set locale"
+  copy:
+    dest: /etc/locale.conf
+    content: |
+      LANG=de_CH.UTF-8
+      LC_MESSAGES=POSIX
+
+- name: "configure initramfs"
+  lineinfile:
+    path: /etc/mkinitcpio.conf
+    regexp: '^HOOKS='
+    line: 'HOOKS="base udev autodetect modconf block filesystems keyboard keymap encrypt fsck"'
+  register: initramfs_config
+
+- name: "update initramfs"
+  command: mkinitcpio -p linux
+  when: initramfs_config.changed
+
+- name: "install syslinux"
+  command: syslinux-install_update -i -m
+
+- name: "configure syslinux"
+  copy:
+    src: syslinux.cfg
+    dest: /boot/syslinux/syslinux.cfg

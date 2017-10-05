@@ -1,0 +1,20 @@
+- name: "install tools"
+  pacman:
+    name: "{{ item }}"
+  with_items:
+    - git
+    - neovim
+    - exfat-utils
+  become: true
+
+- name: "configure git"
+  copy:
+    src: gitconfig
+    dest: ~/.gitconfig
+
+- name: "configure aliases"
+  blockinfile:
+    marker: "# {mark} ALIASES"
+    dest: ~/.bashrc
+    content: |
+      alias vi=nvim

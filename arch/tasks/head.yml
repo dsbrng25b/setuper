@@ -1,0 +1,46 @@
+- name: "install head packages"
+  become: true
+  pacman:
+    name: "{{ item }}"
+  with_items:
+    - alsa-utils
+    - xorg
+    - xorg-xinit
+    - xorg-xrdb
+    - arandr
+    - rxvt-unicode
+    - i3-wm
+    - dmenu
+    - i3status
+    - chromium 
+    - gcc
+
+- name: "configure x11 keyboard"
+  become: true
+  copy:
+    src: x11/10-keyboard.conf
+    dest: /etc/X11/xorg.conf.d/10-keyboard.conf
+
+- name: "copy xinitrc"
+  copy:
+    src: x11/xinitrc
+    dest: ~/.xinitrc
+
+- name: "copy Xresources"
+  copy:
+    src: x11/Xresources
+    dest: ~/.Xresources
+
+- name: "configure i3"
+  copy:
+    src: i3
+    dest: ~/.config
+
+- name: "configure i3status"
+  copy:
+    src: i3status
+    dest: ~/.config
+
+- name: "unmute alsa"
+  command: amixer sset Master unmute
+  become: true

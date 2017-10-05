@@ -1,0 +1,4 @@
+- hosts: all
+  become_method: su
+  roles:
+    - arch
