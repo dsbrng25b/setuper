@@ -13,6 +13,7 @@
     - dmenu
     - i3status
     - chromium 
+    - ttf-inconsolata
     - gcc
 
 - name: "configure x11 keyboard"
