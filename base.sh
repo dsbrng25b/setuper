@@ -38,13 +38,13 @@ EOF
 	echo 'Server = http://archlinux.puzzle.ch/$repo/os/$arch' > /etc/pacman.d/mirrorlist
 	pacstrap /mnt base
 	genfstab -U /mnt >> /mnt/etc/fstab
-	cp "$0" /mnt/tmp/
-	if ! arch-chroot /mnt sh /tmp/$( basename $0 ) post
+	cp "$0" /mnt/root/
+	if ! arch-chroot /mnt /bin/bash /root/$( basename $0 ) post
 	then
 		echo "Something in the post setup went wrong. You can retry the setup by running the following commands: "
 		echo ""
-		echo "\tarch-chroot /mnt /bin/bash"
-		echo "\tsh /tmp/$( basename $0 ) post"
+		echo "	arch-chroot /mnt /bin/bash"
+		echo "	sh /tmp/$( basename $0 ) post"
 		echo ""
 	else
 		echo "Setup was successful. You can reboot now:"
@@ -65,7 +65,7 @@ post_chroot_setup() {
 	echo "Set password for $USERNAME"
 	passwd "$USERNAME"
 
-	pacman -S git ansible python
+	pacman --noconfirm -S git ansible python
 
 	git clone https://github.com/dsbrng25b/setuper.git /tmp/setuper
 
