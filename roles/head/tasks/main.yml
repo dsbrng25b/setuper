@@ -19,17 +19,23 @@
 - name: "configure x11 keyboard"
   become: true
   copy:
-    src: x11/10-keyboard.conf
-    dest: /etc/X11/xorg.conf.d/10-keyboard.conf
+    src: 99-keyboard.conf
+    dest: /etc/X11/xorg.conf.d/
+
+- name: "configure x11 touchpad"
+  become: true
+  copy:
+    src: 99-synaptic-touchpad.conf
+    dest: /etc/X11/xorg.conf.d/
 
 - name: "copy xinitrc"
   copy:
-    src: x11/xinitrc
+    src: xinitrc
     dest: ~/.xinitrc
 
 - name: "copy Xresources"
   copy:
-    src: x11/Xresources
+    src: Xresources
     dest: ~/.Xresources
 
 - name: "configure i3"

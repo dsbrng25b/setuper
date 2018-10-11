@@ -2,7 +2,7 @@
 
 set -o errexit
 
-DEVICE="/dev/sda"
+DEVICE="/dev/nvme0n1p"
 BOOT_PARTITION="${DEVICE}1"
 MAIN_PARTITION="${DEVICE}2"
 CRYPT_DEVICE_NAME="cryptroot"
@@ -70,7 +70,7 @@ post_chroot_setup() {
 	git clone https://github.com/dsbrng25b/setuper.git /tmp/setuper
 
 	# run ansible as unpreviledged user that copied files get the right permission
-	su -c 'ansible-playbook -K -i "localhost," -c local /tmp/setuper/all.yml' "$USERNAME"
+	su -c 'ansible-playbook -K -i "localhost," -c local /tmp/setuper/all.yml --extra-vars "crypt_partition="'"$CRYPT_PARTITION"' main_partition='"$MAIN_PARTITION"'"' "$USERNAME"
 
 }
 

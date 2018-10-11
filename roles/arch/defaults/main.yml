@@ -1,0 +1,2 @@
+main_partition: /dev/nvme0n1p2
+crypt_partition: /dev/mapper/cryptroot

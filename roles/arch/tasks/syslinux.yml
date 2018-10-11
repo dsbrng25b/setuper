@@ -1,0 +1,25 @@
+- name: "install packages"
+  pacman:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - syslinux
+
+- name: "configure initramfs"
+  lineinfile:
+    path: /etc/mkinitcpio.conf
+    regexp: '^HOOKS='
+    line: 'HOOKS="base udev autodetect modconf block filesystems keyboard keymap encrypt fsck"'
+  register: initramfs_config
+
+- name: "update initramfs"
+  command: mkinitcpio -p linux
+  when: initramfs_config.changed
+
+- name: "install syslinux"
+  command: syslinux-install_update -i -m
+
+- name: "configure syslinux"
+  template:
+    src: syslinux.cfg
+    dest: /boot/syslinux/syslinux.cfg

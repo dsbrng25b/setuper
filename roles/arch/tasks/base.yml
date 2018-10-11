@@ -1,0 +1,44 @@
+- name: "install packages"
+  pacman:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - wpa_supplicant
+    - iw
+    - dialog
+
+- name: "set hostname"
+  copy:
+    content: "foooo\n"
+    dest: /etc/hostname
+
+- name: "set timezone"
+  file:
+    src: /usr/share/zoneinfo/Europe/Zurich
+    dest: /etc/localtime
+    state: link
+
+- name: "configure keymap"
+  copy:
+    dest: /etc/vconsole.conf
+    content: |
+      KEYMAP=de_CH-latin1
+      FONT=latarcyrheb-sun32
+
+- name: "enable locale"
+  locale_gen:
+    name: de_CH.UTF-8
+    state: present
+
+- name: "set locale"
+  copy:
+    dest: /etc/locale.conf
+    content: |
+      LANG=de_CH.UTF-8
+      LC_MESSAGES=POSIX
+
+- name: "no beep"
+  copy:
+    dest: /etc/modprobe.d/nobeep.conf
+    content: |
+      blacklist pcspkr

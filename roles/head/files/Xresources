@@ -1,6 +1,6 @@
 
-URxvt.font: xft:Monospace:size=11
-URxvt.boldFont: xft:Monospace:bold:size=11
+URxvt.font: xft:Monospace:size=19
+URxvt.boldFont: xft:Monospace:bold:size=19
 URxvt.letterSpace: -1
 URxvt*loginShell:  true
 

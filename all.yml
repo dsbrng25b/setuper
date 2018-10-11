@@ -1,4 +1,7 @@
 - hosts: all
   become_method: su
   roles:
-    - arch
+    - name: arch
+      become: true
+    - name: head
+    - name: tools
