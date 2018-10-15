@@ -12,9 +12,10 @@
     - i3-wm
     - dmenu
     - i3status
-    - chromium 
+    - i3lock
     - ttf-inconsolata
     - gcc
+    - xf86-video-intel
 
 - name: "configure x11 keyboard"
   become: true
@@ -51,3 +52,23 @@
 - name: "unmute alsa"
   command: amixer sset Master unmute
   become: true
+
+- name: "permission to change brightness"
+  become: true
+  user:
+    name: "{{ lookup('env','USER') }}"
+    groups: video
+    append: true
+
+- name: "brightness udev rule"
+  become: true
+  copy:
+    src: backlight.rules
+    dest: /etc/udev/rules.d/backlight.rules
+
+- name: "configure"
+  become: true
+  copy:
+    src: 20-intel.conf
+    dest: /etc/X11/xorg.conf.d/
+

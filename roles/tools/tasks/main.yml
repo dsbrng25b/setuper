@@ -1,16 +1,71 @@
 - name: "install tools"
+  become: true
   pacman:
     name: "{{ item }}"
   with_items:
     - git
     - neovim
     - exfat-utils
-  become: true
+    - openssh
+    - pass
+    - thunar
+    - chromium
+    - firefox
+    - openconnect
+    - cifs-utils
+    - docker
+    - vagrant
+    - pkgconf
+    - make
+    - libvirt
+    - qemu
+    - go
+    - xournal
+    - maven
+    - jdk10-openjdk
+    - feh
 
 - name: "configure git"
   copy:
     src: gitconfig
     dest: ~/.gitconfig
+
+- name: "add home bin to path"
+  become: true
+  copy:
+    src: home_bin.sh
+    dest: /etc/profile.d/
+
+- name: "configure vagrant"
+  become: true
+  copy:
+    src: vagrant.sh
+    dest: /etc/profile.d/
+
+# TODO: run only when file exists
+- name: "check vagrant plugins"
+  include_vars:
+    file: ~/.vagrant.d/plugins.json
+    name: vagrant_plugins
+
+- name: "install vagrant libvirt plugin"
+  command: vagrant plugin install vagrant-libvirt
+  when: 'not ( "vagrant-libvirt" in vagrant_plugins.installed )'
+
+- name: "add user to libvirt group"
+  become: true
+  user:
+    name: "{{ lookup('env','USER') }}"
+    groups: libvirt
+    append: true
+
+- name: "enable and start libvirt"
+  become: true
+  systemd:
+    name: libvirtd
+    state: started
+    enabled: true
+    daemon_reload: yes
 
 - name: "configure aliases"
   blockinfile:
@@ -18,3 +73,12 @@
     dest: ~/.bashrc
     content: |
       alias vi=nvim
+
+- name: "install base16 colors"
+  git:
+    repo: https://github.com/chriskempson/base16-shell.git
+    dest: ~/.config/base16-shell
+
+# add source in bashrc
+ 
+# add vim plug
