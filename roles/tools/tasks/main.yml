@@ -79,6 +79,44 @@
     repo: https://github.com/chriskempson/base16-shell.git
     dest: ~/.config/base16-shell
 
-# add source in bashrc
- 
-# add vim plug
+- name: "check helm version"
+  command: "{{ tool_dir }}/helm version -c"
+  ignore_errors: True
+  register: helm_check
+
+- name: "install helm {{ helm_version }}"
+  shell: "curl -f -sS -L https://storage.googleapis.com/kubernetes-helm/helm-{{ helm_version }}-linux-amd64.tar.gz | tar --strip-components=1 -C {{ tool_dir }} -xzv linux-amd64/helm"
+  args:
+    warn: False
+  when: not helm_check.rc == 0 or not helm_version in helm_check.stdout
+
+- name: "check kubectl version"
+  command: "{{ tool_dir }}/kubectl version --client"
+  ignore_errors: True
+  register: kubectl_check
+
+- name: "install kubectl {{ kubectl_version }}"
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
+    dest: "~/bin/kubectl"
+    mode: 0755
+  when: not kubectl_check.rc == 0 or not kubectl_version in kubectl_check.stdout
+
+- name: "check minikube version"
+  command: "{{ tool_dir }}/minikube version"
+  ignore_errors: True
+  register: minikube_check
+
+- name: "install minikube {{ minikube_version }}"
+  get_url:
+    url: "https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-linux-amd64"
+    dest: "~/bin/minikube"
+    mode: 0755
+  when: not minikube_check.rc == 0 or not minikube_version in minikube_check.stdout
+
+- name: "install minikube kvm2 driver"
+  get_url:
+    url: "https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/docker-machine-driver-kvm2"
+    dest: "~/bin/docker-machine-driver-kvm2"
+    mode: 0755
+  when: not minikube_check.rc == 0 or not minikube_version in minikube_check.stdout

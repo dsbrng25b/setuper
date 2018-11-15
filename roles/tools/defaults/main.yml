@@ -1,0 +1,7 @@
+# install dir for tools
+tool_dir: ~/bin
+
+# tool versions
+kubectl_version: v1.12.2
+helm_version: v2.11.0
+minikube_version: v0.30.0
